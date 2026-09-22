@@ -1,4 +1,3 @@
-
 export const te = new TextEncoder();
 export const td = new TextDecoder();
 
@@ -19,13 +18,13 @@ export function concatBytes(...arrays) {
   return out;
 }
 
-function u32(n) {
+export function u32be(n) {
   const b = new Uint8Array(4);
   new DataView(b.buffer).setUint32(0, n >>> 0, false);
   return b;
 }
 
-function readU32(bytes, offset) {
+export function readU32be(bytes, offset) {
   return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(offset, false);
 }
 
@@ -65,7 +64,8 @@ export async function sha256(bytes) {
 
 export async function deriveKeys(password, salt, build) {
   assert(password.length > 0, "Password must not be empty.");
-  const domain = te.encode(`Sagittarius/${build.family}/${build.version}/Web/1`);
+  const webVersion = build.tesseract ? 2 : 1;
+  const domain = te.encode(`Sagittarius/${build.family}/${build.version}/Web/${webVersion}`);
   const domainHash = await sha256(domain);
   const pbkdf = await crypto.subtle.importKey("raw", te.encode(password), "PBKDF2", false, ["deriveBits"]);
   const rootBits = await crypto.subtle.deriveBits({
@@ -74,9 +74,10 @@ export async function deriveKeys(password, salt, build) {
   const hkdf = await crypto.subtle.importKey("raw", rootBits, "HKDF", false, ["deriveBits"]);
   const encBits = await crypto.subtle.deriveBits({name:"HKDF", hash:"SHA-256", salt:domainHash, info:te.encode("encryption")}, hkdf, 256);
   const quoteBits = await crypto.subtle.deriveBits({name:"HKDF", hash:"SHA-256", salt:domainHash, info:te.encode("quotes")}, hkdf, 256);
+  const mazeBits = await crypto.subtle.deriveBits({name:"HKDF", hash:"SHA-256", salt:domainHash, info:te.encode("tesseract-maze")}, hkdf, 256);
   const encKey = await crypto.subtle.importKey("raw", encBits, {name:"AES-GCM"}, false, ["encrypt", "decrypt"]);
   const quoteKey = await crypto.subtle.importKey("raw", quoteBits, {name:"HMAC", hash:"SHA-256"}, false, ["sign"]);
-  return {encKey, quoteKey};
+  return {encKey, quoteKey, mazeSeed: new Uint8Array(mazeBits)};
 }
 
 async function streamTransform(bytes, kind) {
@@ -93,9 +94,7 @@ export async function maybeCompress(raw, build) {
     const zipped = await streamTransform(raw, "compress");
     if (build.compression === "deflate") return {id: 1, data: zipped};
     if (build.compression === "adaptive-deflate" && zipped.length + 16 < raw.length) return {id: 1, data: zipped};
-  } catch (_) {
-    // Browser fallback remains decryptable because the selected compression id is authenticated inside ciphertext.
-  }
+  } catch (_) {}
   return {id: 0, data: raw};
 }
 
@@ -117,16 +116,16 @@ export function buildRecord(rawData, compId, originalSize, build) {
   const unpadded = 13 + rawData.length + baseJunk;
   const target = Math.ceil(unpadded / build.padBlock) * build.padBlock;
   const junkLen = baseJunk + (target - unpadded);
-  const junk = crypto.getRandomValues(new Uint8Array(junkLen));
-  return concatBytes(new Uint8Array([compId]), u32(originalSize), u32(rawData.length), u32(junkLen), rawData, junk);
+  const junk = randomBytes(junkLen);
+  return concatBytes(new Uint8Array([compId]), u32be(originalSize), u32be(rawData.length), u32be(junkLen), rawData, junk);
 }
 
 export function parseRecord(record) {
   assert(record.length >= 13, "Encrypted payload record is truncated.");
   const compId = record[0];
-  const originalSize = readU32(record, 1);
-  const dataLen = readU32(record, 5);
-  const junkLen = readU32(record, 9);
+  const originalSize = readU32be(record, 1);
+  const dataLen = readU32be(record, 5);
+  const junkLen = readU32be(record, 9);
   assert(originalSize <= MAX_INPUT_BYTES, "Authenticated original size exceeds the browser safety limit.");
   assert(13 + dataLen + junkLen === record.length, "Encrypted payload record lengths do not match.");
   return {compId, originalSize, data: record.slice(13, 13 + dataLen), junkLen};
@@ -142,3 +141,10 @@ export function prngFromBytes(bytes) {
   };
 }
 
+export function randomBytes(length) {
+  const out = new Uint8Array(length);
+  for (let i = 0; i < length; i += 65536) {
+    crypto.getRandomValues(out.subarray(i, Math.min(i + 65536, length)));
+  }
+  return out;
+}

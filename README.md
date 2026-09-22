@@ -1,6 +1,6 @@
 # Sagittarius
 
-Sagittarius is the program family. Each build type follows a different transformation path and output design while preserving the same recurring quote signature.
+Sagittarius is a multi-build authenticated encryption / hostile-transport experiment. The program name stays constant; the second word identifies a build path and the number identifies that path's version.
 
 ## Installed builds
 
@@ -9,37 +9,37 @@ Sagittarius is the program family. Each build type follows a different transform
 | Sagittarius Violet 1 | Lean | Deflate-first | Low | operators, mathematical Unicode, glyphs, emoji |
 | Sagittarius Sapphire 3 | Balanced | Adaptive | Medium | ASCII, box glyphs, operators, emoji |
 | Sagittarius Parallel 5 | Oversized | None | Heavy | three supplementary-plane Unicode codepoints per token |
+| Sagittarius Tesseract 6 | Maze | None | Extreme | 32-codepoint combining stacks, key-derived rounds, junk corridors, giant prologue |
 
 Naming convention: **`[Program] [Build Type] [Build Version]`**.
 
-## Web
+## Web Engine 2
 
-The static browser application is in [`web/`](./web). It supports:
+The browser application lives in [`web/`](./web) and is deployable as a static Vercel or GitHub Pages site. It supports:
 
-- build selection;
-- password-based encryption;
-- automatic build detection during decryption;
-- strict, taunt, and gibberish wrong-password behaviors;
-- the shared Sagittarius quote pool in every build;
-- local-only browser processing;
-- authenticated quote-layout verification.
+- all four installed builds;
+- password-based encryption and automatic build detection during decryption;
+- strict, taunt and gibberish wrong-password behavior;
+- local text/code file upload;
+- complete output download and clipboard copy;
+- bounded on-screen previews for very large ciphertext while preserving the full output in memory;
+- Web Engine 1 compatibility for existing Violet 1, Sapphire 3 and Parallel 5 browser payloads.
 
-The web engine uses browser-native **AES-256-GCM**, **PBKDF2-SHA-256**, and **HKDF-SHA-256**. GitHub Pages only serves the files; passwords and plaintext are not sent to the repository or a Sagittarius server.
+All browser cryptography runs locally. Hosting only serves static HTML/CSS/JavaScript; plaintext, ciphertext and passwords are not submitted to Sagittarius or Vercel.
 
-> The Web Engine 1 container format is separate from the Python/scrypt container format. Web payloads decrypt in the web implementation; Python payloads decrypt in the Python implementation.
+The web engine uses browser-native **AES-256-GCM**, **PBKDF2-SHA-256**, and **HKDF-SHA-256**. Tesseract adds a password-derived reversible maze transport on top of the authenticated container; that maze is obfuscation/presentation rather than additional cryptographic key strength.
+
+> The browser container and the Python/scrypt reference container are separate formats. Browser payloads decrypt in the browser implementation; Python payloads decrypt in the Python implementation.
+
+## Tesseract 6 in the browser
+
+Tesseract has one large Unicode confidence-breaker prologue instead of the ordinary Sagittarius quote weaving. Its real container sextets are state-mixed, passed through 20–40 key-derived permutation rounds, surrounded by indistinguishable junk corridors, and finally rendered as 32-codepoint combining-mark stacks. The browser caps Tesseract plaintext at 96 KiB because the visible representation can expand into tens of megabytes.
 
 ## Python / desktop
 
-The complete Python/reference source bundle is in [`python/Sagittarius-Python-Source.zip`](./python/Sagittarius-Python-Source.zip). It contains the three-build package, CLI, tests, compatibility facade, and project README.
+The Python/reference bundle remains under [`python/`](./python). It uses scrypt/HKDF/AES-GCM and is the reference implementation for the desktop container family.
 
-```bash
-unzip Sagittarius-Python-Source.zip
-python -m pip install -r requirements.txt
-python test_all.py
-```
+## Deployment
 
-## GitHub Pages
-
-The workflow at [`.github/workflows/pages.yml`](./.github/workflows/pages.yml) deploys the `web/` directory using GitHub's official Pages actions.
-
-If Pages has never been enabled for this repository, open **Settings → Pages → Build and deployment → Source → GitHub Actions** once. After that, pushes affecting `web/` deploy automatically.
+- **GitHub Pages:** `.github/workflows/pages.yml` publishes `web/` automatically.
+- **Vercel:** `vercel.json` rewrites the production root to the same static `web/` application and adds restrictive security headers.

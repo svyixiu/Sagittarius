@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="dark" />
-  <meta name="description" content="Sagittarius browser encryption playground — Violet 1, Sapphire 3, and Parallel 5." />
+  <meta name="description" content="Sagittarius browser encryption playground — Violet 1, Sapphire 3, Parallel 5, and Tesseract 6." />
   <title>Sagittarius — Multi-Build Encryption</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -13,13 +13,13 @@
   <main class="shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">SAGITTARIUS / WEB ENGINE 1</p>
-        <h1>One program.<br><span>Different paths.</span></h1>
-        <p class="lede">Choose a build, encrypt locally with a password, or feed Sagittarius a payload and recover it. Every build keeps the same quote signature while changing its output grammar, compression, padding and junk profile.</p>
+        <p class="eyebrow">SAGITTARIUS / WEB ENGINE 2</p>
+        <h1>One program.<br><span>Four hostile paths.</span></h1>
+        <p class="lede">Choose a build, encrypt with a password, or feed Sagittarius an existing web payload and recover it. Violet, Sapphire and Parallel preserve the classic quote system. Tesseract turns the visible transport into a key-derived Unicode maze.</p>
       </div>
       <div class="privacy-card">
         <span class="pulse"></span>
-        <div><strong>Local-only cryptography</strong><small>Plaintext and passwords stay inside your browser.</small></div>
+        <div><strong>Local-only processing</strong><small>Vercel/GitHub only serve the files. Plaintext, payloads and passwords stay in your browser.</small></div>
       </div>
     </header>
 
@@ -57,10 +57,19 @@
         </div>
       </div>
 
+      <div class="filebar">
+        <div class="file-meta"><span class="file-dot"></span><span id="file-name">No file loaded</span></div>
+        <div class="file-actions">
+          <input id="file-input" type="file" hidden />
+          <button id="upload" class="ghost compact" type="button">Upload input</button>
+          <button id="download" class="ghost compact" type="button" disabled>Download output</button>
+        </div>
+      </div>
+
       <div class="editor-grid">
         <label class="editor-panel">
-          <span class="editor-title" id="input-label">Plaintext</span>
-          <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes…"></textarea>
+          <span class="editor-title" id="input-label">Plaintext / source</span>
+          <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes… or upload a text/code file."></textarea>
         </label>
         <label class="editor-panel output-panel">
           <span class="editor-title" id="output-label">Encrypted payload</span>
@@ -74,7 +83,7 @@
           <button id="preview-wrong" class="ghost" type="button" hidden>Preview wrong password</button>
         </div>
         <div class="secondary-actions">
-          <button id="copy" class="ghost" type="button">Copy output</button>
+          <button id="copy" class="ghost" type="button" disabled>Copy full output</button>
           <button id="clear" class="ghost" type="button">Clear</button>
         </div>
       </div>
@@ -89,11 +98,12 @@
       <article><span>01</span><h3>Violet 1</h3><p>Leanest branch. Deflate-first compression, low junk pressure, operator and mathematical-symbol output.</p></article>
       <article><span>02</span><h3>Sapphire 3</h3><p>Balanced branch. Adaptive compression, medium junk, mixed ASCII/glyph/emoji output.</p></article>
       <article><span>03</span><h3>Parallel 5</h3><p>Excessive branch. No compression, heavy junk, and three rare Unicode codepoints for every six encoded bits.</p></article>
+      <article class="tesseract-note"><span>04</span><h3>Tesseract 6</h3><p>No compression. A giant opening prologue, 32-codepoint combining stacks, 20–40 key-derived maze rounds and junk corridors around every survivor.</p></article>
     </section>
 
     <footer>
-      <p>Web Engine 1 uses browser-native WebCrypto AES-GCM with PBKDF2 → HKDF. The repository also contains the Python/scrypt implementation. The two container formats are intentionally separate.</p>
-      <div class="footer-links"><a href="https://github.com/svyixiu/Sagittarius/tree/main/python">Desktop implementation</a><a href="https://github.com/svyixiu/Sagittarius">Repository</a></div>
+      <p>Web Engine 2 uses browser-native AES-GCM with PBKDF2 → HKDF. Existing Web Engine 1 payloads for Violet 1, Sapphire 3 and Parallel 5 remain compatible. The Python/scrypt reference format remains a separate container family.</p>
+      <div class="footer-links"><a href="https://github.com/svyixiu/Sagittarius/tree/main/python">Python implementation</a><a href="https://github.com/svyixiu/Sagittarius">Repository</a></div>
     </footer>
   </main>
   <script type="module" src="./app.js"></script>
