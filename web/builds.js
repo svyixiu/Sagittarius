@@ -11,6 +11,21 @@ const PARALLEL_TOKENS = Array.from({length: 64}, (_, i) =>
   String.fromCodePoint(0x13000 + i) + String.fromCodePoint(0x1D300 + i) + String.fromCodePoint(0x1F700 + i)
 );
 
+function makeTesseractTokens() {
+  const base = 0x0300;
+  const span = 0x70;
+  return Array.from({length: 64}, (_, value) => {
+    const cps = [base + value];
+    for (let j = 1; j < 32; j++) {
+      const mixed = (value * 37 + j * 53 + ((value ^ j) * 11) + (value * j * 3)) % span;
+      cps.push(base + mixed);
+    }
+    return String.fromCodePoint(...cps);
+  });
+}
+
+const TESSERACT_TOKENS = makeTesseractTokens();
+
 export const BUILDS = {
   "Violet 1": {
     key: "Violet 1", family: "Violet", version: 1, magic: "SGV1", tokens: VIOLET_TOKENS,
@@ -29,6 +44,11 @@ export const BUILDS = {
     compression: "none", junkRatio: 1.50, padBlock: 512, quoteDensity: 70, wrapTokens: 30,
     iterations: 320000,
     summary: "Oversized rare-Unicode output: three supplementary-plane codepoints per token."
+  },
+  "Tesseract 6": {
+    key: "Tesseract 6", family: "Tesseract", version: 6, magic: "SGT6", tokens: TESSERACT_TOKENS,
+    compression: "none", junkRatio: 1.50, padBlock: 512, quoteDensity: 0, wrapTokens: 0,
+    iterations: 320000, tesseract: true,
+    summary: "Brutal all-Unicode maze: 32-codepoint glyph stacks, key-derived rounds and indistinguishable junk corridors."
   }
 };
-
