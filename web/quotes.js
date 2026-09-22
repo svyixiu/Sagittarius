@@ -1,0 +1,50 @@
+export const QUOTES = [
+  "Sagittarius.", "I was here.", "I swear I saw him.", "He was there just now.",
+  "Maybe that one.", "You are so close.", "Keep trying.", "I stupidly believe in you.",
+  "Wrong turn.", "Not this one.", "You missed it.", "Almost.", "Again.", "Look behind this.",
+  "Nothing here.", "That was close.", "I saw you.", "Still looking?", "You passed it.",
+  "Go back.", "No, further back.", "It moved.", "I think it moved.", "That wasn't there before.",
+  "Don't trust this line.", "Ignore me.", "Ignore that.", "This one is real.", "This one isn't.",
+  "One of us is lying.", "Maybe all of us are.", "I remember this part.", "I've seen this before.",
+  "You have too.", "There was something here.", "Someone removed it.", "It used to say something.",
+  "I forgot what it said.", "He told me not to tell you.", "I don't know who he is.",
+  "He knows the key.", "He had the key.", "He lost it.", "You already found it.",
+  "You just don't know it yet.", "It isn't where you think.", "You're reading the wrong thing.",
+  "Read between them.", "Not the symbols.", "Not the spaces either.", "The spaces are innocent.",
+  "The spaces are lying.", "Count again.", "You counted wrong.", "Don't count them.",
+  "Start from zero.", "Start from one.", "Neither.", "Try the other way.", "Reverse it.",
+  "Don't reverse it.", "Too obvious.", "Much too obvious.", "Sagittarius wouldn't do that.",
+  "Or would it?", "That's what I thought too.", "I tried that already.", "It didn't work for me.",
+  "Maybe it'll work for you.", "You're warmer.", "Cold.", "Colder.", "Very cold.", "Warm again.",
+  "There.", "No.", "Wait.", "I lost it again.", "It keeps changing.", "Stop moving.",
+  "Stay there.", "I can almost read it.", "Can you see me?", "I can see you.", "Probably.",
+  "Someone is watching.", "Not me.", "Maybe me.", "Don't ask.", "I shouldn't be here.",
+  "Neither should you.", "We weren't supposed to meet.", "This wasn't meant for you.",
+  "Or maybe it was.", "You weren't the first.", "Someone came before you.", "They got further.",
+  "They didn't come back.", "I'm still waiting for them.", "He said you'd come.", "He was right.",
+  "He usually is.", "I don't trust him.", "You shouldn't either.", "Sagittarius knows.",
+  "Sagittarius remembers.", "Sagittarius forgot you.", "Sagittarius remembers you.",
+  "Sagittarius is listening.", "Sagittarius doesn't care.", "Sagittarius lied.",
+  "Sagittarius never lies.", "Ask Sagittarius.", "Don't ask Sagittarius.", "You found a fragment.",
+  "That's not the fragment.", "That's only noise.", "The noise is useful.",
+  "The noise is the answer.", "The answer is noise.", "Nothing means anything here.",
+  "Everything means something here.", "One character is wrong.", "More than one.",
+  "None of them are right.", "One of them is enough.", "You're holding the wrong key.",
+  "The key fits.", "The lock doesn't.", "Wrong lock.", "Right key.", "Wrong key.", "No key.",
+  "It opened anyway.", "It shouldn't have opened.", "Close it.", "Too late.",
+  "You broke something.", "I heard that.", "Did you hear that?", "Never mind.", "Keep going.",
+  "Stop.", "Seriously, stop.", "Fine.", "Your choice.", "I warned you.", "I didn't warn you.",
+  "Pretend I did.", "We can pretend this worked.", "You almost fooled me.",
+  "You almost fooled yourself.", "Nice try.", "Better than last time.", "Worse than last time.",
+  "There was a last time.", "You don't remember?", "That's unfortunate.", "Try remembering.",
+  "I remember for you.", "I shouldn't remember this.", "This isn't my data.",
+  "This isn't your data either.", "Whose is it?", "Don't answer that.", "Someone left this behind.",
+  "Maybe you did.", "I found your mistake.", "I'm not telling you where.",
+  "It's right in front of you.", "It always was.", "You looked directly at it.", "And missed it."
+];
+
+export const QUOTE_STYLES = [
+  ["(", ")"], ["[", "]"], ["{", "}"], ["<", ">"], ["⟦", "⟧"], ["▋", "▐"], ["«", "»"], ["(:: ", " ::)"]
+];
+export const QUOTE_STYLE_ORDER = QUOTE_STYLES.map((_, i) => i).sort((a, b) => Array.from(QUOTE_STYLES[b][0]).length - Array.from(QUOTE_STYLES[a][0]).length);
+

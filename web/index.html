@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Sagittarius browser encryption playground — Violet 1, Sapphire 3, and Parallel 5." />
+  <title>Sagittarius — Multi-Build Encryption</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">SAGITTARIUS / WEB ENGINE 1</p>
+        <h1>One program.<br><span>Different paths.</span></h1>
+        <p class="lede">Choose a build, encrypt locally with a password, or feed Sagittarius a payload and recover it. Every build keeps the same quote signature while changing its output grammar, compression, padding and junk profile.</p>
+      </div>
+      <div class="privacy-card">
+        <span class="pulse"></span>
+        <div><strong>Local-only cryptography</strong><small>Plaintext and passwords stay inside your browser.</small></div>
+      </div>
+    </header>
+
+    <section class="build-section" aria-labelledby="build-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">BUILD TYPE</p><h2 id="build-heading">Choose the path</h2></div>
+        <span class="badge" id="detected-build">Sapphire 3</span>
+      </div>
+      <div class="build-grid" id="build-grid"></div>
+    </section>
+
+    <section class="workspace">
+      <div class="workspace-top">
+        <div>
+          <p class="eyebrow" id="mode-label">Encryption workspace</p>
+          <div class="segmented" role="tablist" aria-label="Operation">
+            <button id="mode-encrypt" class="active" type="button">Encrypt</button>
+            <button id="mode-decrypt" type="button">Decrypt</button>
+          </div>
+        </div>
+        <div class="password-box">
+          <label for="password">Password</label>
+          <div class="password-row">
+            <input id="password" type="password" autocomplete="off" spellcheck="false" placeholder="Required" />
+            <button id="password-toggle" class="ghost compact" type="button">Show</button>
+          </div>
+        </div>
+        <div class="wrong-box" id="wrong-wrap" hidden>
+          <label for="wrong-mode">Wrong-key behavior</label>
+          <select id="wrong-mode">
+            <option value="taunt" selected>Taunt / decoy path</option>
+            <option value="gibberish">Gibberish reconstruction</option>
+            <option value="strict">Strict authentication error</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <label class="editor-panel">
+          <span class="editor-title" id="input-label">Plaintext</span>
+          <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes…"></textarea>
+        </label>
+        <label class="editor-panel output-panel">
+          <span class="editor-title" id="output-label">Encrypted payload</span>
+          <textarea id="output" readonly spellcheck="false" placeholder="Encrypted Sagittarius output appears here."></textarea>
+        </label>
+      </div>
+
+      <div class="action-row">
+        <div class="primary-actions">
+          <button id="run" class="primary" type="button">Encrypt</button>
+          <button id="preview-wrong" class="ghost" type="button" hidden>Preview wrong password</button>
+        </div>
+        <div class="secondary-actions">
+          <button id="copy" class="ghost" type="button">Copy output</button>
+          <button id="clear" class="ghost" type="button">Clear</button>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <p id="status" data-kind="neutral">Ready.</p>
+        <div class="metrics" id="metrics"></div>
+      </div>
+    </section>
+
+    <section class="notes">
+      <article><span>01</span><h3>Violet 1</h3><p>Leanest branch. Deflate-first compression, low junk pressure, operator and mathematical-symbol output.</p></article>
+      <article><span>02</span><h3>Sapphire 3</h3><p>Balanced branch. Adaptive compression, medium junk, mixed ASCII/glyph/emoji output.</p></article>
+      <article><span>03</span><h3>Parallel 5</h3><p>Excessive branch. No compression, heavy junk, and three rare Unicode codepoints for every six encoded bits.</p></article>
+    </section>
+
+    <footer>
+      <p>Web Engine 1 uses browser-native WebCrypto AES-GCM with PBKDF2 → HKDF. The repository also contains the Python/scrypt implementation. The two container formats are intentionally separate.</p>
+      <div class="footer-links"><a href="https://github.com/svyixiu/Sagittarius/tree/main/python">Desktop implementation</a><a href="https://github.com/svyixiu/Sagittarius">Repository</a></div>
+    </footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
