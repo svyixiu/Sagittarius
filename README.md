@@ -30,10 +30,10 @@ The web engine uses browser-native **AES-256-GCM**, **PBKDF2-SHA-256**, and **HK
 
 ## Python / desktop
 
-The Python implementation is in [`python/`](./python) and includes the three-build package, CLI, generated samples, and test suite.
+The complete Python/reference source bundle is in [`python/Sagittarius-Python-Source.zip`](./python/Sagittarius-Python-Source.zip). It contains the three-build package, CLI, tests, compatibility facade, and project README.
 
 ```bash
-cd python
+unzip Sagittarius-Python-Source.zip
 python -m pip install -r requirements.txt
 python test_all.py
 ```
