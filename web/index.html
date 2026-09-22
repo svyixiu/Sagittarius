@@ -4,108 +4,154 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="dark" />
-  <meta name="description" content="Sagittarius browser encryption playground — Violet 1, Sapphire 3, Parallel 5, and Tesseract 6." />
-  <title>Sagittarius — Multi-Build Encryption</title>
+  <meta name="description" content="Sagittarius local encryption workspace." />
+  <title>Sagittarius · Local Encryption</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <div class="noise"></div>
-  <main class="shell">
-    <header class="hero">
+  <header class="gh-header">
+    <div class="gh-topbar">
+      <div class="brand-mark" aria-hidden="true">&lt;/&gt;</div>
+      <div class="repo-path"><span>svyixiu</span><b>/</b><strong>Sagittarius</strong><span class="public-pill">Public</span></div>
+      <div class="local-pill"><span class="status-dot"></span>localhost</div>
+    </div>
+    <nav class="repo-tabs" aria-label="Repository navigation">
+      <button class="repo-tab" type="button">Code</button>
+      <button class="repo-tab active" type="button">Encrypt</button>
+      <button class="repo-tab" type="button">Builds <span class="counter">4</span></button>
+      <button class="repo-tab" type="button">About</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="repo-summary">
       <div>
-        <p class="eyebrow">SAGITTARIUS / WEB ENGINE 2</p>
-        <h1>One program.<br><span>Four hostile paths.</span></h1>
-        <p class="lede">Choose a build, encrypt with a password, or feed Sagittarius an existing web payload and recover it. Violet, Sapphire and Parallel preserve the classic quote system. Tesseract turns the visible transport into a key-derived Unicode maze.</p>
+        <div class="branch-row"><span class="branch-chip">main</span><span class="muted">Sagittarius Local UI</span></div>
+        <h1>Encryption workspace</h1>
+        <p>Encrypt or decrypt locally using one of the installed Sagittarius builds. The CLI only serves these files over loopback; cryptographic work remains in the browser.</p>
       </div>
-      <div class="privacy-card">
-        <span class="pulse"></span>
-        <div><strong>Local-only processing</strong><small>Vercel/GitHub only serve the files. Plaintext, payloads and passwords stay in your browser.</small></div>
+      <div class="local-card">
+        <div class="local-card-title"><span class="status-dot"></span>Local session</div>
+        <div class="local-card-row"><span>Transport</span><b>127.0.0.1</b></div>
+        <div class="local-card-row"><span>Backend upload</span><b>None</b></div>
+        <div class="local-card-row"><span>Crypto</span><b>Browser</b></div>
       </div>
-    </header>
-
-    <section class="build-section" aria-labelledby="build-heading">
-      <div class="section-heading">
-        <div><p class="eyebrow">BUILD TYPE</p><h2 id="build-heading">Choose the path</h2></div>
-        <span class="badge" id="detected-build">Sapphire 3</span>
-      </div>
-      <div class="build-grid" id="build-grid"></div>
     </section>
 
-    <section class="workspace">
-      <div class="workspace-top">
-        <div>
-          <p class="eyebrow" id="mode-label">Encryption workspace</p>
-          <div class="segmented" role="tablist" aria-label="Operation">
-            <button id="mode-encrypt" class="active" type="button">Encrypt</button>
-            <button id="mode-decrypt" type="button">Decrypt</button>
+    <div class="layout">
+      <section class="main-column">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <strong>Select build</strong>
+              <span class="subtle">Choose the visible transport path used for encryption.</span>
+            </div>
+            <span class="badge" id="detected-build">Sapphire 3</span>
           </div>
-        </div>
-        <div class="password-box">
-          <label for="password">Password</label>
-          <div class="password-row">
-            <input id="password" type="password" autocomplete="off" spellcheck="false" placeholder="Required" />
-            <button id="password-toggle" class="ghost compact" type="button">Show</button>
+          <div class="build-grid" id="build-grid"></div>
+        </section>
+
+        <section class="panel workspace">
+          <div class="workspace-toolbar">
+            <div>
+              <span class="toolbar-label" id="mode-label">Encryption workspace</span>
+              <div class="segmented" role="tablist" aria-label="Operation">
+                <button id="mode-encrypt" class="active" type="button">Encrypt</button>
+                <button id="mode-decrypt" type="button">Decrypt</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="password-row">
+                <input id="password" type="password" autocomplete="off" spellcheck="false" placeholder="Required" />
+                <button id="password-toggle" class="gh-button" type="button">Show</button>
+              </div>
+            </div>
+            <div class="field" id="wrong-wrap" hidden>
+              <label for="wrong-mode">Wrong-key behavior</label>
+              <select id="wrong-mode">
+                <option value="taunt" selected>Taunt / decoy path</option>
+                <option value="gibberish">Gibberish reconstruction</option>
+                <option value="strict">Strict authentication error</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="wrong-box" id="wrong-wrap" hidden>
-          <label for="wrong-mode">Wrong-key behavior</label>
-          <select id="wrong-mode">
-            <option value="taunt" selected>Taunt / decoy path</option>
-            <option value="gibberish">Gibberish reconstruction</option>
-            <option value="strict">Strict authentication error</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="filebar">
-        <div class="file-meta"><span class="file-dot"></span><span id="file-name">No file loaded</span></div>
-        <div class="file-actions">
-          <input id="file-input" type="file" hidden />
-          <button id="upload" class="ghost compact" type="button">Upload input</button>
-          <button id="download" class="ghost compact" type="button" disabled>Download output</button>
-        </div>
-      </div>
+          <div class="filebar">
+            <div class="file-meta">
+              <span class="file-icon">▣</span>
+              <span id="file-name">No file loaded</span>
+            </div>
+            <div class="file-actions">
+              <input id="file-input" type="file" hidden />
+              <button id="upload" class="gh-button" type="button">Upload input</button>
+              <button id="download" class="gh-button" type="button" disabled>Download output</button>
+            </div>
+          </div>
 
-      <div class="editor-grid">
-        <label class="editor-panel">
-          <span class="editor-title" id="input-label">Plaintext / source</span>
-          <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes… or upload a text/code file."></textarea>
-        </label>
-        <label class="editor-panel output-panel">
-          <span class="editor-title" id="output-label">Encrypted payload</span>
-          <textarea id="output" readonly spellcheck="false" placeholder="Encrypted Sagittarius output appears here."></textarea>
-        </label>
-      </div>
+          <div class="editor-grid">
+            <label class="editor-panel">
+              <span class="editor-title"><span id="input-label">Plaintext / source</span><span class="editor-kind">UTF-8</span></span>
+              <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes… or upload a text/code file."></textarea>
+            </label>
+            <label class="editor-panel output-panel">
+              <span class="editor-title"><span id="output-label">Encrypted payload</span><span class="editor-kind">read-only</span></span>
+              <textarea id="output" readonly spellcheck="false" placeholder="Encrypted Sagittarius output appears here."></textarea>
+            </label>
+          </div>
 
-      <div class="action-row">
-        <div class="primary-actions">
-          <button id="run" class="primary" type="button">Encrypt</button>
-          <button id="preview-wrong" class="ghost" type="button" hidden>Preview wrong password</button>
-        </div>
-        <div class="secondary-actions">
-          <button id="copy" class="ghost" type="button" disabled>Copy full output</button>
-          <button id="clear" class="ghost" type="button">Clear</button>
-        </div>
-      </div>
+          <div class="action-row">
+            <div class="primary-actions">
+              <button id="run" class="gh-button primary" type="button">Encrypt</button>
+              <button id="preview-wrong" class="gh-button" type="button" hidden>Preview wrong password</button>
+            </div>
+            <div class="secondary-actions">
+              <button id="copy" class="gh-button" type="button" disabled>Copy full output</button>
+              <button id="clear" class="gh-button" type="button">Clear</button>
+            </div>
+          </div>
 
-      <div class="status-row">
-        <p id="status" data-kind="neutral">Ready.</p>
-        <div class="metrics" id="metrics"></div>
-      </div>
-    </section>
+          <div class="status-row">
+            <p id="status" data-kind="neutral">Ready.</p>
+            <div class="metrics" id="metrics"></div>
+          </div>
+        </section>
+      </section>
 
-    <section class="notes">
-      <article><span>01</span><h3>Violet 1</h3><p>Leanest branch. Deflate-first compression, low junk pressure, operator and mathematical-symbol output.</p></article>
-      <article><span>02</span><h3>Sapphire 3</h3><p>Balanced branch. Adaptive compression, medium junk, mixed ASCII/glyph/emoji output.</p></article>
-      <article><span>03</span><h3>Parallel 5</h3><p>Excessive branch. No compression, heavy junk, and three rare Unicode codepoints for every six encoded bits.</p></article>
-      <article class="tesseract-note"><span>04</span><h3>Tesseract 6</h3><p>No compression. A giant opening prologue, 32-codepoint combining stacks, 20–40 key-derived maze rounds and junk corridors around every survivor.</p></article>
-    </section>
+      <aside class="sidebar">
+        <section class="side-section">
+          <h2>About</h2>
+          <p>Multi-build authenticated encryption and hostile visible transport, served entirely from your local machine.</p>
+          <div class="topic-row"><span>encryption</span><span>unicode</span><span>local-only</span></div>
+        </section>
+
+        <section class="side-section">
+          <h2>Builds</h2>
+          <div class="build-list">
+            <div><span class="build-dot violet"></span><b>Violet 1</b><small>lean</small></div>
+            <div><span class="build-dot sapphire"></span><b>Sapphire 3</b><small>balanced</small></div>
+            <div><span class="build-dot parallel"></span><b>Parallel 5</b><small>oversized</small></div>
+            <div><span class="build-dot tesseract"></span><b>Tesseract 6</b><small>maze</small></div>
+          </div>
+        </section>
+
+        <section class="side-section">
+          <h2>Runtime</h2>
+          <ul class="runtime-list">
+            <li><span>Server</span><b>Python stdlib</b></li>
+            <li><span>Network</span><b>Loopback only</b></li>
+            <li><span>Dependencies</span><b>0</b></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
 
     <footer>
-      <p>Web Engine 2 uses browser-native AES-GCM with PBKDF2 → HKDF. Existing Web Engine 1 payloads for Violet 1, Sapphire 3 and Parallel 5 remain compatible. The Python/scrypt reference format remains a separate container family.</p>
-      <div class="footer-links"><a href="https://github.com/svyixiu/Sagittarius/tree/main/python">Python implementation</a><a href="https://github.com/svyixiu/Sagittarius">Repository</a></div>
+      <span>Sagittarius Local · Web Engine 2</span>
+      <span>Stop the local server with <code>Ctrl+C</code>.</span>
     </footer>
   </main>
+
   <script type="module" src="./app.js"></script>
 </body>
 </html>
