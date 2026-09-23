@@ -13,12 +13,12 @@
     <div class="gh-topbar">
       <div class="brand-mark" aria-hidden="true">&lt;/&gt;</div>
       <div class="repo-path"><span>svyixiu</span><b>/</b><strong>Sagittarius</strong><span class="public-pill">Public</span></div>
-      <div class="local-pill"><span class="status-dot"></span>localhost</div>
+      <div class="local-pill"><span class="status-dot"></span>browser-only</div>
     </div>
     <nav class="repo-tabs" aria-label="Repository navigation">
       <button class="repo-tab" type="button">Code</button>
       <button class="repo-tab active" type="button">Encrypt</button>
-      <button class="repo-tab" type="button">Builds <span class="counter">4</span></button>
+      <button class="repo-tab" type="button">Builds <span class="counter">5</span></button>
       <button class="repo-tab" type="button">About</button>
     </nav>
   </header>
@@ -31,8 +31,8 @@
         <p>Encrypt or decrypt locally using one of the installed Sagittarius builds. The CLI only serves these files over loopback; cryptographic work remains in the browser.</p>
       </div>
       <div class="local-card">
-        <div class="local-card-title"><span class="status-dot"></span>Local session</div>
-        <div class="local-card-row"><span>Transport</span><b>127.0.0.1</b></div>
+        <div class="local-card-title"><span class="status-dot"></span>Private browser session</div>
+        <div class="local-card-row"><span>Transport</span><b>Static UI</b></div>
         <div class="local-card-row"><span>Backend upload</span><b>None</b></div>
         <div class="local-card-row"><span>Crypto</span><b>Browser</b></div>
       </div>
@@ -46,7 +46,7 @@
               <strong>Select build</strong>
               <span class="subtle">Choose the visible transport path used for encryption.</span>
             </div>
-            <span class="badge" id="detected-build">Sapphire 3</span>
+            <span class="badge" id="detected-build">Tesseract 7</span>
           </div>
           <div class="build-grid" id="build-grid"></div>
         </section>
@@ -132,6 +132,7 @@
             <div><span class="build-dot sapphire"></span><b>Sapphire 3</b><small>balanced</small></div>
             <div><span class="build-dot parallel"></span><b>Parallel 5</b><small>oversized</small></div>
             <div><span class="build-dot tesseract"></span><b>Tesseract 6</b><small>maze</small></div>
+            <div><span class="build-dot tesseract"></span><b>Tesseract 7</b><small>ChaCha maze</small></div>
           </div>
         </section>
 
@@ -140,7 +141,7 @@
           <ul class="runtime-list">
             <li><span>Server</span><b>Python stdlib</b></li>
             <li><span>Network</span><b>Loopback only</b></li>
-            <li><span>Dependencies</span><b>0</b></li>
+            <li><span>Tesseract 7</span><b>ChaCha20-Poly1305</b></li>
           </ul>
         </section>
       </aside>
@@ -148,7 +149,7 @@
 
     <footer>
       <span>Sagittarius Local · Web Engine 2</span>
-      <span>Stop the local server with <code>Ctrl+C</code>.</span>
+      <span>Static-host compatible · cryptography stays in the browser.</span>
     </footer>
   </main>
 

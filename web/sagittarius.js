@@ -1,8 +1,16 @@
 import { BUILDS } from "./builds.js";
 import { te, td, FORMAT_VERSION, HEADER_SIZE, MAX_INPUT_BYTES, MAX_CONTAINER_BYTES, assert, concatBytes, bytesToIndices, deriveKeys, maybeCompress, decompress, makeHeader, buildRecord, parseRecord } from "./primitives.js";
-import { quoteLayout, weave, detectBuild, sameLayout, makeDecoy, encodeTesseractVisible, decodeTesseractVisible, parseTesseractVisible } from "./codec.js";
+import { quoteLayout, weave, detectBuild as detectLegacyBuild, sameLayout, makeDecoy, encodeTesseractVisible, decodeTesseractVisible, parseTesseractVisible } from "./codec.js";
+import { chacha20Poly1305Encrypt, chacha20Poly1305Decrypt, deriveTesseract7Keys, encodeTesseract7Visible, decodeTesseract7Visible, parseTesseract7Visible, detectTesseract7 } from "./tesseract7.js";
 export { BUILDS };
-export { detectBuild } from "./codec.js";
+
+export function detectBuild(payload) {
+  const t7 = BUILDS["Tesseract 7"];
+  if (t7) {
+    try { return detectTesseract7(payload, t7); } catch (_) {}
+  }
+  return detectLegacyBuild(payload);
+}
 
 export async function encryptSagittarius(plaintext, password, buildKey = "Sapphire 3") {
   const build = BUILDS[buildKey];
@@ -10,8 +18,11 @@ export async function encryptSagittarius(plaintext, password, buildKey = "Sapphi
   assert(password.length > 0, "Password must not be empty.");
   const raw = te.encode(plaintext);
   assert(raw.length <= MAX_INPUT_BYTES, `Input exceeds the ${MAX_INPUT_BYTES / 1024 / 1024} MiB browser limit.`);
-  if (build.tesseract && raw.length > 96 * 1024) {
+  if (build.tesseract && !build.tesseract7 && raw.length > 96 * 1024) {
     throw new Error("Tesseract 6 is capped at 96 KiB of plaintext in the browser because its visible maze can expand into tens of megabytes.");
+  }
+  if (build.tesseract7 && raw.length > 192 * 1024) {
+    throw new Error("Tesseract 7 is capped at 192 KiB of plaintext in the browser because its corrupted symbol maze deliberately expands the visible transport.");
   }
 
   const compressed = await maybeCompress(raw, build);
@@ -19,6 +30,31 @@ export async function encryptSagittarius(plaintext, password, buildKey = "Sapphi
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const header = makeHeader(build, salt, iv);
+  if (build.tesseract7) {
+    const {chachaKey, mazeSeed} = await deriveTesseract7Keys(password, salt, build);
+    const cipher = chacha20Poly1305Encrypt(chachaKey, iv, record, header);
+    const container = concatBytes(header, cipher);
+    assert(container.length <= MAX_CONTAINER_BYTES, "Generated container exceeds the browser safety limit.");
+    const rendered = encodeTesseract7Visible(container, build, salt, mazeSeed);
+    return {
+      payload: rendered.payload,
+      build,
+      stats: {
+        inputBytes: raw.length,
+        compressedBytes: compressed.data.length,
+        compression: compressed.id === 1 ? "adaptive-deflate" : "none",
+        cipher: "ChaCha20-Poly1305",
+        junkBytes: record.length - 13 - compressed.data.length,
+        containerBytes: container.length,
+        mazeRounds: rendered.rounds,
+        realTokens: rendered.realTokens,
+        visibleTokens: rendered.visibleTokens,
+        outputBytes: te.encode(rendered.payload).length,
+        quotes: 1
+      }
+    };
+  }
+
   const {encKey, quoteKey, mazeSeed} = await deriveKeys(password, salt, build);
   const cipher = new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM", iv, additionalData:header, tagLength:128}, encKey, record));
   const container = concatBytes(header, cipher);
@@ -68,8 +104,22 @@ export async function decryptSagittarius(payload, password, {wrongKeyMode = "tau
   const detected = detectBuild(payload);
   const {build} = detected;
 
-  let container, salt, mazeStats = null, found = detected.found || [];
-  if (build.tesseract) {
+  let container, salt, mazeStats = null, found = detected.found || [], t7Keys = null;
+  if (build.tesseract7) {
+    let parsed;
+    try {
+      parsed = parseTesseract7Visible(payload, build);
+      salt = parsed.salt;
+      t7Keys = await deriveTesseract7Keys(password, salt, build);
+      const recovered = decodeTesseract7Visible(payload, build, t7Keys.mazeSeed);
+      container = recovered.container;
+      mazeStats = recovered;
+    } catch (err) {
+      if (wrongKeyMode === "strict") throw new Error("Authentication failed: incorrect password or modified Tesseract 7 maze.");
+      const decoy = await makeDecoy(password, te.encode(payload.slice(0, 65536)), build, wrongKeyMode);
+      return {ok:false, build, wrongKey:true, output:decoy, reason:err?.message || "Tesseract 7 reconstruction failed."};
+    }
+  } else if (build.tesseract) {
     let parsed;
     try {
       parsed = parseTesseractVisible(payload, build);
@@ -94,20 +144,30 @@ export async function decryptSagittarius(payload, password, {wrongKeyMode = "tau
   const iv = container.slice(21, 33);
   const header = container.slice(0, HEADER_SIZE);
   const cipher = container.slice(HEADER_SIZE);
-  const {encKey, quoteKey} = await deriveKeys(password, salt, build);
-
   let record;
-  try {
-    record = new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM", iv, additionalData:header, tagLength:128}, encKey, cipher));
-  } catch (_) {
-    const decoy = await makeDecoy(password, build.tesseract ? te.encode(payload.slice(0, 65536)) : container, build, wrongKeyMode);
-    if (wrongKeyMode === "strict") throw new Error("Authentication failed: incorrect password or modified payload.");
-    return {ok:false, build, wrongKey:true, output:decoy, reason:"Authentication failed before plaintext recovery."};
-  }
+  if (build.tesseract7) {
+    try {
+      t7Keys ||= await deriveTesseract7Keys(password, salt, build);
+      record = chacha20Poly1305Decrypt(t7Keys.chachaKey, iv, cipher, header);
+    } catch (_) {
+      const decoy = await makeDecoy(password, te.encode(payload.slice(0, 65536)), build, wrongKeyMode);
+      if (wrongKeyMode === "strict") throw new Error("Authentication failed: incorrect password or modified ChaCha20-Poly1305 payload.");
+      return {ok:false, build, wrongKey:true, output:decoy, reason:"ChaCha20-Poly1305 authentication failed before plaintext recovery."};
+    }
+  } else {
+    const {encKey, quoteKey} = await deriveKeys(password, salt, build);
+    try {
+      record = new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM", iv, additionalData:header, tagLength:128}, encKey, cipher));
+    } catch (_) {
+      const decoy = await makeDecoy(password, build.tesseract ? te.encode(payload.slice(0, 65536)) : container, build, wrongKeyMode);
+      if (wrongKeyMode === "strict") throw new Error("Authentication failed: incorrect password or modified payload.");
+      return {ok:false, build, wrongKey:true, output:decoy, reason:"Authentication failed before plaintext recovery."};
+    }
 
-  if (!build.tesseract) {
-    const expectedLayout = await quoteLayout(quoteKey, container, build, bytesToIndices(container).length);
-    if (!sameLayout(found, expectedLayout)) throw new Error("Sagittarius quote layout was modified or removed.");
+    if (!build.tesseract) {
+      const expectedLayout = await quoteLayout(quoteKey, container, build, bytesToIndices(container).length);
+      if (!sameLayout(found, expectedLayout)) throw new Error("Sagittarius quote layout was modified or removed.");
+    }
   }
 
   const parsed = parseRecord(record);
@@ -116,7 +176,8 @@ export async function decryptSagittarius(payload, password, {wrongKeyMode = "tau
   const stats = {
     plaintextBytes: plainBytes.length,
     compressedBytes: parsed.data.length,
-    compression: parsed.compId === 1 ? "deflate" : "none",
+    compression: parsed.compId === 1 ? (build.tesseract7 ? "adaptive-deflate" : "deflate") : "none",
+    cipher: build.tesseract7 ? "ChaCha20-Poly1305" : "AES-256-GCM",
     junkBytes: parsed.junkLen,
     containerBytes: container.length,
     quotes: build.tesseract ? 1 : found.length
