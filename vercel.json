@@ -7,7 +7,8 @@
     { "source": "/codec.js", "destination": "/web/codec.js" },
     { "source": "/primitives.js", "destination": "/web/primitives.js" },
     { "source": "/quotes.js", "destination": "/web/quotes.js" },
-    { "source": "/sagittarius.js", "destination": "/web/sagittarius.js" }
+    { "source": "/sagittarius.js", "destination": "/web/sagittarius.js" },
+    { "source": "/tesseract7.js", "destination": "/web/tesseract7.js" }
   ],
   "headers": [
     {
