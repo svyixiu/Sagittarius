@@ -4,152 +4,128 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="dark" />
-  <meta name="description" content="Sagittarius local encryption workspace." />
-  <title>Sagittarius · Local Encryption</title>
+  <meta name="description" content="Sagittarius browser encryption workspace." />
+  <title>Sagittarius · Encryption Workspace</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <header class="gh-header">
-    <div class="gh-topbar">
-      <div class="brand-mark" aria-hidden="true">&lt;/&gt;</div>
-      <div class="repo-path"><span>svyixiu</span><b>/</b><strong>Sagittarius</strong><span class="public-pill">Public</span></div>
-      <div class="local-pill"><span class="status-dot"></span>browser-only</div>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora-orb orb-a"></span>
+    <span class="aurora-orb orb-b"></span>
+    <span class="aurora-orb orb-c"></span>
+    <span class="grain"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◇</span>
+      <span>Sagittarius</span>
     </div>
-    <nav class="repo-tabs" aria-label="Repository navigation">
-      <button class="repo-tab" type="button">Code</button>
-      <button class="repo-tab active" type="button">Encrypt</button>
-      <button class="repo-tab" type="button">Builds <span class="counter">5</span></button>
-      <button class="repo-tab" type="button">About</button>
-    </nav>
+    <div class="privacy-pill"><span></span> Private in your browser</div>
   </header>
 
-  <main class="page">
-    <section class="repo-summary">
-      <div>
-        <div class="branch-row"><span class="branch-chip">main</span><span class="muted">Sagittarius Local UI</span></div>
-        <h1>Encryption workspace</h1>
-        <p>Encrypt or decrypt locally using one of the installed Sagittarius builds. The CLI only serves these files over loopback; cryptographic work remains in the browser.</p>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">SAGITTARIUS</p>
+      <h1>Encryption,<br><span>distilled.</span></h1>
+      <p class="hero-copy">Choose a model, choose its version, then encrypt. No account flow, no server upload, no distractions.</p>
+    </section>
+
+    <section class="glass selector-card" id="selector-card">
+      <div class="section-row">
+        <div>
+          <span class="section-label">Model</span>
+          <p class="section-copy">Different visible transport behaviors. The cryptographic engine remains authenticated.</p>
+        </div>
+        <span class="selection-badge" id="selected-build">Tesseract 7</span>
       </div>
-      <div class="local-card">
-        <div class="local-card-title"><span class="status-dot"></span>Private browser session</div>
-        <div class="local-card-row"><span>Transport</span><b>Static UI</b></div>
-        <div class="local-card-row"><span>Backend upload</span><b>None</b></div>
-        <div class="local-card-row"><span>Crypto</span><b>Browser</b></div>
+
+      <div class="model-grid" id="model-grid"></div>
+
+      <div class="selector-divider"></div>
+
+      <div class="version-row">
+        <div>
+          <span class="section-label">Version</span>
+          <span class="model-note" id="model-note">Choose the generation for this model.</span>
+        </div>
+        <div class="version-grid" id="version-grid"></div>
+      </div>
+
+      <div class="model-detail" id="model-detail"></div>
+    </section>
+
+    <section class="glass workspace">
+      <div class="workspace-head">
+        <div class="operation">
+          <span class="section-label">Operation</span>
+          <div class="segmented" role="tablist" aria-label="Operation">
+            <button id="mode-encrypt" class="ripple active" type="button">Encrypt</button>
+            <button id="mode-decrypt" class="ripple" type="button">Decrypt</button>
+          </div>
+        </div>
+
+        <div class="field password-field">
+          <label for="password">Password</label>
+          <div class="password-row">
+            <input id="password" type="password" autocomplete="off" spellcheck="false" placeholder="Enter a key" />
+            <button id="password-toggle" class="soft-button ripple" type="button">Show</button>
+          </div>
+        </div>
+
+        <div class="field" id="wrong-wrap" hidden>
+          <label for="wrong-mode">Wrong key</label>
+          <select id="wrong-mode">
+            <option value="taunt" selected>Decoy path</option>
+            <option value="gibberish">Gibberish</option>
+            <option value="strict">Strict error</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filebar">
+        <div class="file-meta">
+          <span class="file-dot"></span>
+          <span id="file-name">No file loaded</span>
+        </div>
+        <div class="file-actions">
+          <input id="file-input" type="file" hidden />
+          <button id="upload" class="soft-button ripple" type="button">Upload</button>
+          <button id="download" class="soft-button ripple" type="button" disabled>Download</button>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <label class="editor-panel">
+          <span class="editor-title"><span id="input-label">Plaintext</span><span>UTF-8</span></span>
+          <textarea id="input" spellcheck="false" placeholder="Write or paste anything here…"></textarea>
+        </label>
+
+        <label class="editor-panel output-panel">
+          <span class="editor-title"><span id="output-label">Encrypted payload</span><span>OUTPUT</span></span>
+          <textarea id="output" readonly spellcheck="false" placeholder="Your result appears here."></textarea>
+        </label>
+      </div>
+
+      <div class="action-row">
+        <div class="primary-actions">
+          <button id="run" class="primary-button ripple" type="button">Encrypt</button>
+          <button id="preview-wrong" class="soft-button ripple" type="button" hidden>Preview wrong key</button>
+        </div>
+        <div class="secondary-actions">
+          <button id="copy" class="soft-button ripple" type="button" disabled>Copy</button>
+          <button id="clear" class="soft-button ripple" type="button">Clear</button>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <p id="status" data-kind="neutral">Ready.</p>
+        <div class="metrics" id="metrics"></div>
       </div>
     </section>
 
-    <div class="layout">
-      <section class="main-column">
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <strong>Select build</strong>
-              <span class="subtle">Choose the visible transport path used for encryption.</span>
-            </div>
-            <span class="badge" id="detected-build">Tesseract 7</span>
-          </div>
-          <div class="build-grid" id="build-grid"></div>
-        </section>
-
-        <section class="panel workspace">
-          <div class="workspace-toolbar">
-            <div>
-              <span class="toolbar-label" id="mode-label">Encryption workspace</span>
-              <div class="segmented" role="tablist" aria-label="Operation">
-                <button id="mode-encrypt" class="active" type="button">Encrypt</button>
-                <button id="mode-decrypt" type="button">Decrypt</button>
-              </div>
-            </div>
-            <div class="field">
-              <label for="password">Password</label>
-              <div class="password-row">
-                <input id="password" type="password" autocomplete="off" spellcheck="false" placeholder="Required" />
-                <button id="password-toggle" class="gh-button" type="button">Show</button>
-              </div>
-            </div>
-            <div class="field" id="wrong-wrap" hidden>
-              <label for="wrong-mode">Wrong-key behavior</label>
-              <select id="wrong-mode">
-                <option value="taunt" selected>Taunt / decoy path</option>
-                <option value="gibberish">Gibberish reconstruction</option>
-                <option value="strict">Strict authentication error</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="filebar">
-            <div class="file-meta">
-              <span class="file-icon">▣</span>
-              <span id="file-name">No file loaded</span>
-            </div>
-            <div class="file-actions">
-              <input id="file-input" type="file" hidden />
-              <button id="upload" class="gh-button" type="button">Upload input</button>
-              <button id="download" class="gh-button" type="button" disabled>Download output</button>
-            </div>
-          </div>
-
-          <div class="editor-grid">
-            <label class="editor-panel">
-              <span class="editor-title"><span id="input-label">Plaintext / source</span><span class="editor-kind">UTF-8</span></span>
-              <textarea id="input" spellcheck="false" placeholder="Paste text, code, JSON, notes… or upload a text/code file."></textarea>
-            </label>
-            <label class="editor-panel output-panel">
-              <span class="editor-title"><span id="output-label">Encrypted payload</span><span class="editor-kind">read-only</span></span>
-              <textarea id="output" readonly spellcheck="false" placeholder="Encrypted Sagittarius output appears here."></textarea>
-            </label>
-          </div>
-
-          <div class="action-row">
-            <div class="primary-actions">
-              <button id="run" class="gh-button primary" type="button">Encrypt</button>
-              <button id="preview-wrong" class="gh-button" type="button" hidden>Preview wrong password</button>
-            </div>
-            <div class="secondary-actions">
-              <button id="copy" class="gh-button" type="button" disabled>Copy full output</button>
-              <button id="clear" class="gh-button" type="button">Clear</button>
-            </div>
-          </div>
-
-          <div class="status-row">
-            <p id="status" data-kind="neutral">Ready.</p>
-            <div class="metrics" id="metrics"></div>
-          </div>
-        </section>
-      </section>
-
-      <aside class="sidebar">
-        <section class="side-section">
-          <h2>About</h2>
-          <p>Multi-build authenticated encryption and hostile visible transport, served entirely from your local machine.</p>
-          <div class="topic-row"><span>encryption</span><span>unicode</span><span>local-only</span></div>
-        </section>
-
-        <section class="side-section">
-          <h2>Builds</h2>
-          <div class="build-list">
-            <div><span class="build-dot violet"></span><b>Violet 1</b><small>lean</small></div>
-            <div><span class="build-dot sapphire"></span><b>Sapphire 3</b><small>balanced</small></div>
-            <div><span class="build-dot parallel"></span><b>Parallel 5</b><small>oversized</small></div>
-            <div><span class="build-dot tesseract"></span><b>Tesseract 6</b><small>maze</small></div>
-            <div><span class="build-dot tesseract"></span><b>Tesseract 7</b><small>ChaCha maze</small></div>
-          </div>
-        </section>
-
-        <section class="side-section">
-          <h2>Runtime</h2>
-          <ul class="runtime-list">
-            <li><span>Server</span><b>Python stdlib</b></li>
-            <li><span>Network</span><b>Loopback only</b></li>
-            <li><span>Tesseract 7</span><b>ChaCha20-Poly1305</b></li>
-          </ul>
-        </section>
-      </aside>
-    </div>
-
     <footer>
-      <span>Sagittarius Local · Web Engine 2</span>
-      <span>Static-host compatible · cryptography stays in the browser.</span>
+      Everything runs locally in this browser tab. Sagittarius never receives your plaintext or password.
     </footer>
   </main>
 
