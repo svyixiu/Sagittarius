@@ -14,7 +14,7 @@ const els = {
 const PREVIEW_LIMIT = 240_000;
 const FILE_LIMIT = 64 * 1024 * 1024;
 let mode = "encrypt";
-let buildKey = "Sapphire 3";
+let buildKey = "Tesseract 7";
 let lastEncrypted = "";
 let lastFullOutput = "";
 let lastOutputBuild = "";
@@ -43,7 +43,7 @@ function renderBuilds() {
       <span class="build-kicker">${build.family.toUpperCase()}</span>
       <span class="build-name">${build.key}</span>
       <span class="build-summary">${build.summary}</span>
-      <span class="build-meta">junk ×${build.junkRatio.toFixed(2)} · ${build.compression} · ${Array.from(build.tokens[0]).length}cp/token</span>
+      <span class="build-meta">${build.cipher || "AES-256-GCM"} · ${build.compression} · ${Array.from(build.tokens[0]).length}cp/token</span>
     `;
     button.addEventListener("click", () => {
       buildKey = build.key;
@@ -66,7 +66,7 @@ function setMode(next) {
   els.inputLabel.textContent = enc ? "Plaintext / source" : "Sagittarius payload";
   els.outputLabel.textContent = enc ? "Encrypted payload" : "Recovered output";
   els.run.textContent = enc ? "Encrypt" : "Decrypt";
-  els.input.placeholder = enc ? "Paste text, code, JSON, notes… or upload a text/code file." : "Paste or upload a Sagittarius Violet 1, Sapphire 3, Parallel 5, or Tesseract 6 payload…";
+  els.input.placeholder = enc ? "Paste text, code, JSON, notes… or upload a text/code file." : "Paste or upload a Sagittarius Violet 1, Sapphire 3, Parallel 5, Tesseract 6, or Tesseract 7 payload…";
   els.output.placeholder = enc ? "Encrypted Sagittarius output appears here." : "Plaintext or wrong-key behavior appears here.";
   els.detectBadge.textContent = enc ? buildKey : "Auto-detect";
   setStatus("Ready. Processing stays in this browser.", "neutral");
